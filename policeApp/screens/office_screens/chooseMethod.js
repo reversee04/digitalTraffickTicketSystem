@@ -5,8 +5,7 @@ import ToIdCard from "../../components/officerComponents/toID";
 function ChooseMethod({navigation}){
     return (
         <View style={styles.container}>
-            <ToIdCard title={'Scan Licence Plate'} onPress={() => navigation.navigate('OffenderReview')}/>
-            <ToIdCard title={'Scan Drivers Licence'}/>
+            <ToIdCard title={'Scan Number Plate'} onPress={() => navigation.navigate('OffenderReview')}/>
         </View>
     )
 }
