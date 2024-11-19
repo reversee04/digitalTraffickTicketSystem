@@ -1,4 +1,3 @@
-// server.js
 require('dotenv').config();
 const express = require('express');
 const helmet = require('helmet');
@@ -10,13 +9,12 @@ const compression = require('compression');
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
-const driverRoutes = require('./routes/driverRoutes')
-const officerRoutes = require('./routes/officerRoutes')
-const vehicleRoutes = require('./routes/vehicleRoutes')
-const ticketRoutes = require('./routes/ticketRoutes')
-const violationRoutes = require('./routes/violationRoutes')
-const paymentRoutes = require('./routes/paymentRoutes')
-
+const driverRoutes = require('./routes/driverRoutes');
+const officerRoutes = require('./routes/officerRoutes');
+const vehicleRoutes = require('./routes/vehicleRoutes');
+const ticketRoutes = require('./routes/ticketRoutes');
+const violationRoutes = require('./routes/violationRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
 
 const app = express();
 
@@ -26,7 +24,6 @@ if (process.env.NODE_ENV === 'production') {
   const cert = fs.readFileSync(path.resolve(__dirname, 'path-to-cert.pem'));
   const httpsServer = https.createServer({ key, cert }, app);
 }
-
 
 // Security headers
 app.use(helmet());
@@ -40,7 +37,7 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // Cross-Origin Resource Sharing (CORS) configuration
-const allowedOrigins = ['https://yourfrontend.com']; 
+const allowedOrigins = ['https://yourfrontend.com'];
 app.use(
   cors({
     origin: allowedOrigins,
@@ -50,7 +47,7 @@ app.use(
 );
 
 // Body parser and cookie parser
-app.use(express.json({ limit: '10kb' })); 
+app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
@@ -60,7 +57,7 @@ app.use(xssClean());
 // Compress response bodies
 app.use(compression());
 
-
+// Routes
 app.use('/api', driverRoutes);
 app.use('/api', officerRoutes);
 app.use('/api', ticketRoutes);
@@ -68,15 +65,8 @@ app.use('/api', violationRoutes);
 app.use('/api', vehicleRoutes);
 app.use('/api', paymentRoutes);
 
-
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err);
   res.status(500).json({ message: 'Internal Server Error' });
-});
-
-// Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
 });
