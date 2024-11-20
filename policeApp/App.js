@@ -13,6 +13,7 @@ import DetailsScreen from './screens/office_screens/historyDetails';
 import FilterScreen from './screens/office_screens/filterHistory';
 import OffenderReview from './screens/office_screens/offenderReview';
 import AddOffences from './screens/office_screens/addOffences';
+import OCRScreen from './screens/office_screens/Lscan';
 
 const Stack = createNativeStackNavigator();
 
@@ -20,44 +21,45 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('home');
 
   return (
-    <NavigationContainer>
-      <View style={styles.container}>
-        {/* AppBar Component */}
-        <AppBar 
-          onMenuPress={() => console.log("Menu pressed")} 
-          onNotificationPress={() => console.log("Notification pressed")} 
-        />
+    // <NavigationContainer>
+    //   <View style={styles.container}>
+    //     {/* AppBar Component */}
+    //     <AppBar 
+    //       onMenuPress={() => console.log("Menu pressed")} 
+    //       onNotificationPress={() => console.log("Notification pressed")} 
+    //     />
 
-        {/* Stack Navigator for Screens */}
-        <Stack.Navigator initialRouteName="PoliceHome" screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="PoliceHome" component={IndexPoliceScreen} />
-          <Stack.Screen name="HistoryPage" component={PoliceHistoryScreen} />
-          <Stack.Screen name="ProfilePage" component={ProfilePage} />
-          <Stack.Screen name="ToID" component={ChooseMethod} />
-          <Stack.Screen name="HistoryDetails" component={DetailsScreen} />
-          <Stack.Screen name="HistoryFilter" component={FilterScreen} />
-          <Stack.Screen name="OffenderReview" component={OffenderReview} />
-          <Stack.Screen name="AddOffence" component={AddOffences} />
-        </Stack.Navigator>
+    //     {/* Stack Navigator for Screens */}
+    //     <Stack.Navigator initialRouteName="PoliceHome" screenOptions={{ headerShown: false }}>
+    //       <Stack.Screen name="PoliceHome" component={IndexPoliceScreen} />
+    //       <Stack.Screen name="HistoryPage" component={PoliceHistoryScreen} />
+    //       <Stack.Screen name="ProfilePage" component={ProfilePage} />
+    //       <Stack.Screen name="ToID" component={ChooseMethod} />
+    //       <Stack.Screen name="HistoryDetails" component={DetailsScreen} />
+    //       <Stack.Screen name="HistoryFilter" component={FilterScreen} />
+    //       <Stack.Screen name="OffenderReview" component={OffenderReview} />
+    //       <Stack.Screen name="AddOffence" component={AddOffences} />
+    //     </Stack.Navigator>
 
-        {/* BottomNavigationBar Component */}
-        <BottomNavigationBar
-          activeTab={activeTab}
-          onHomePress={() => {
-            setActiveTab('home');
-            navigation.navigate('PoliceHome');
-          }}
-          onHistoryPress={() => {
-            setActiveTab('history');
-            navigation.navigate('HistoryPage');
-          }}
-          onAccountPress={() => {
-            setActiveTab('account');
-            navigation.navigate('ProfilePage');
-          }}
-        />
-      </View>
-    </NavigationContainer>
+    //     {/* BottomNavigationBar Component */}
+    //     <BottomNavigationBar
+    //       activeTab={activeTab}
+    //       onHomePress={() => {
+    //         setActiveTab('home');
+    //         navigation.navigate('PoliceHome');
+    //       }}
+    //       onHistoryPress={() => {
+    //         setActiveTab('history');
+    //         navigation.navigate('HistoryPage');
+    //       }}
+    //       onAccountPress={() => {
+    //         setActiveTab('account');
+    //         navigation.navigate('ProfilePage');
+    //       }}
+    //     />
+    //   </View>
+    // </NavigationContainer>
+    <OCRScreen/>
   );
 }
 

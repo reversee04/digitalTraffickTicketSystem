@@ -1,119 +1,169 @@
-import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import AppText from '../../components/appText/appText';
-import colors from '../../assets/colors';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import axios from 'axios';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-export default function DetailsScreen() {
+const AppText = ({ children, style }) => <Text style={style}>{children}</Text>;
+
+const DetailsScreen = ({ route, navigation }) => {
+  const { ticketId } = route.params; // Retrieve ticketId passed from the previous screen
+  const [ticketDetails, setTicketDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTicketDetails = async () => {
+      try {
+        const response = await axios.get(`http://192.168.238.227:3000/api/tickets/${ticketId}`);
+        setTicketDetails(response.data);
+      } catch (error) {
+        if (error.response?.status === 404) {
+          Alert.alert('Ticket Not Found', `Ticket with ID ${ticketId} not found.`);
+        } else {
+          Alert.alert('Error', 'Could not fetch ticket details');
+        }
+        console.error('Error fetching ticket details:', error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (ticketId) {
+      fetchTicketDetails();
+    } else {
+      Alert.alert('Invalid Ticket ID', 'No ticket ID provided');
+      setLoading(false);
+    }
+  }, [ticketId]);
+
+  if (loading) {
+    return <AppText style={styles.loadingText}>Loading...</AppText>;
+  }
+
+  if (!ticketDetails) {
+    return <AppText style={styles.loadingText}>Ticket not found</AppText>;
+  }
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* Back Icon */}
-      <Icon name="arrow-back" size={24} color={colors.iconColor} style={styles.backIcon} />
+      <TouchableOpacity onPress={() => navigation.goBack()}>
+        <FontAwesome name="arrow-left" size={24} style={styles.backIcon} />
+      </TouchableOpacity>
 
-      {/* ID Header */}
-      <AppText style={styles.headerText}>010003-14052020</AppText>
+      {/* Ticket Header */}
+      <AppText style={styles.ticketHeader}>Ticket No: {ticketDetails?.id}</AppText>
 
-      {/* Pelanggar Section */}
-      <View style={styles.card}>
-        <AppText style={styles.sectionTitle}>Pelanggar</AppText>
-        <View style={styles.row}>
-          <AppText style={styles.label}>Nama Pelanggar</AppText>
-          <AppText style={styles.value}>Ageng Kurniawan</AppText>
-        </View>
-        <View style={styles.row}>
-          <AppText style={styles.label}>Jenis/Nomor ID</AppText>
-          <AppText style={styles.value}>KTP/3275011402960017</AppText>
-        </View>
-        <View style={styles.row}>
-          <AppText style={styles.label}>No. Handphone</AppText>
-          <AppText style={styles.value}>0821 1197 2020</AppText>
-        </View>
-        <View style={styles.row}>
-          <AppText style={styles.label}>Email</AppText>
-          <AppText style={styles.value}>ageng.kurnia@gmail.com</AppText>
-        </View>
-        <View style={styles.row}>
-          <AppText style={styles.label}>Barang Sitaan</AppText>
-          <AppText style={styles.value}>SIM C</AppText>
-        </View>
-        <View style={styles.row}>
-          <AppText style={styles.label}>Pelanggaran Pasal</AppText>
-          <AppText style={styles.value}>Pasal 285 Ayat 1</AppText>
-        </View>
-        <View style={styles.row}>
-          <AppText style={styles.label}></AppText>
-          <AppText style={styles.value}>Pasal 288 Ayat 1</AppText>
-        </View>
-      </View>
+      {/* Offender & Vehicle Details */}
+      <DetailsSection
+        title="Offender & Vehicle Details"
+        icon="user"
+        details={[
+          { label: 'Name', value: ticketDetails?.driver?.name || 'N/A' },
+          { label: 'ID/Phone', value: `${ticketDetails?.driver?.id || 'N/A'} | ${ticketDetails?.driver?.phone || 'N/A'}` },
+          { label: 'Email', value: ticketDetails?.driver?.email || 'N/A' },
+          { label: 'Violations', value: ticketDetails?.violation?.description || 'No Violations Recorded' },
+          { label: 'Vehicle', value: `${ticketDetails?.driver?.vehicle || 'N/A'}` },
+        ]}
+      />
 
-      {/* Pembayaran Section */}
-      <View style={styles.card}>
-        <AppText style={styles.sectionTitle}>Pembayaran</AppText>
-        <View style={styles.row}>
-          <AppText style={styles.label}>Denda Maksimal</AppText>
-          <AppText style={styles.value}>Rp. 750.000</AppText>
-        </View>
-        <View style={styles.row}>
-          <AppText style={styles.label}>Bank Pembayaran</AppText>
-          <AppText style={styles.value}>Bank Permata</AppText>
-        </View>
-        <View style={styles.row}>
-          <AppText style={styles.label}>No. Virtual Account</AppText>
-          <AppText style={styles.value}>9022839483023</AppText>
-        </View>
-      </View>
+      {/* Payment & Status */}
+      <DetailsSection
+        title="Payment & Status"
+        icon="credit-card"
+        details={[
+          { label: 'Fine Amount', value: ticketDetails?.payment?.amount || 'N/A' },
+          { label: 'Status', value: ticketDetails?.status || 'N/A' },
+        ]}
+      />
 
-      {/* Status Section */}
-      <View style={styles.card}>
-        <AppText style={styles.sectionTitle}>Status</AppText>
-        <View style={styles.row}>
-          <AppText style={styles.label}>Status</AppText>
-          <AppText style={styles.value}>Menunggu</AppText>
-        </View>
-      </View>
+      {/* Officer Details */}
+      <DetailsSection
+        title="Officer Details"
+        icon="shield"
+        details={[
+          { label: 'Name', value: ticketDetails?.officer?.name || 'N/A' },
+          { label: 'Contact', value: ticketDetails?.officer?.contact || 'N/A' },
+        ]}
+      />
     </ScrollView>
   );
-}
+};
+
+const DetailsSection = ({ title, icon, details }) => (
+  <View style={styles.section}>
+    <View style={styles.sectionHeader}>
+      <FontAwesome name={icon} size={24} style={styles.icon} />
+      <Text style={styles.sectionTitle}>{title}</Text>
+    </View>
+    {details.map((detail, index) => (
+      <DetailsRow key={index} label={detail.label} value={detail.value} />
+    ))}
+  </View>
+);
+
+const DetailsRow = ({ label, value }) => (
+  <View style={styles.row}>
+    <AppText style={styles.label}>{label}</AppText>
+    <AppText style={styles.value}>{value}</AppText>
+  </View>
+);
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
-    padding: 20,
-    backgroundColor: colors.background,
+    padding: 16,
+    backgroundColor: '#f7fafc',
   },
-  backIcon: {
-    alignSelf: 'flex-start',
-    marginBottom: 10,
-  },
-  headerText: {
-    color: colors.primaryText,
+  loadingText: {
+    fontSize: 18,
     textAlign: 'center',
-    marginVertical: 10,
+    color: '#888',
   },
-  card: {
-    backgroundColor: colors.white,
-    borderRadius: 15,
-    padding: 20,
-    marginVertical: 10,
-    shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 2 },
+  ticketHeader: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  section: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 16,
+    marginVertical: 12,
+    shadowColor: '#000',
     shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
+    shadowRadius: 10,
+    elevation: 2,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  icon: {
+    color: '#3182ce',
   },
   sectionTitle: {
-    color: colors.lightGray,
-    marginBottom: 15,
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
+    color: '#333',
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 5,
+    marginBottom: 8,
   },
   label: {
-    color: colors.white,
+    fontSize: 14,
+    fontWeight: 'bold',
   },
   value: {
-    color: colors.white,
+    fontSize: 14,
+    color: '#666',
+  },
+  backIcon: {
+    marginBottom: 12,
+    color: '#3182ce',
   },
 });
+
+export default DetailsScreen;
