@@ -1,17 +1,17 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons'; // Adjust to the icon library you need
-import colors from '../../assets/colors'; // Assuming you're using a color palette
+import { MaterialIcons } from '@expo/vector-icons';
+import colors from '../../assets/colors';
 
-export default function CircularCard({ icon, id, name, onPress }) {
+export default function CircularCard({ icon, driverName, violation, onPress }) {
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
       <View style={styles.iconContainer}>
-        <MaterialIcons name={icon} size={24} color="white" /> 
+        <MaterialIcons name={icon} size={24} color="white" />
       </View>
       <View style={styles.textContainer}>
-        <Text style={styles.idText}>{id}</Text>
-        <Text style={styles.nameText}>{name}</Text>
+        <Text style={styles.nameText}>{driverName}</Text>
+        <Text style={styles.subtitleText}>{violation}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -43,13 +43,12 @@ const styles = StyleSheet.create({
   textContainer: {
     flex: 1,
   },
-  idText: {
-    color: colors.darkText,
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
   nameText: {
     color: colors.darkText,
     fontSize: 16,
+  },
+  subtitleText: {
+    color: 'darkgray',
+    fontSize: 12,
   },
 });
