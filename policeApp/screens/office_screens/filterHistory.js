@@ -25,10 +25,10 @@ export default function FilterScreen() {
 
       {/* Jenis Tindak Pelanggaran Section */}
       <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Jenis Tindak Pelanggaran</Text>
+        <Text style={styles.sectionTitle}>Types Of Violation</Text>
         <View style={styles.row}>
           <Icon name="document-text" size={24} color="#8E8E8E" />
-          <Text style={styles.label}>Slip Biru</Text>
+          <Text style={styles.label}>OverSpeeding</Text>
           <Switch
             value={slipBiru}
             onValueChange={(value) => setSlipBiru(value)}
@@ -38,7 +38,17 @@ export default function FilterScreen() {
         </View>
         <View style={styles.row}>
           <Icon name="document-text" size={24} color="#8E8E8E" />
-          <Text style={styles.label}>Slip Merah</Text>
+          <Text style={styles.label}>Drink and Drive</Text>
+          <Switch
+            value={slipMerah}
+            onValueChange={(value) => setSlipMerah(value)}
+            trackColor={{ false: '#d3d3d3', true: getSwitchColor(slipMerah) }}
+            thumbColor={slipMerah ? '#FFFFFF' : '#FFFFFF'}
+          />
+        </View>
+        <View style={styles.row}>
+          <Icon name="document-text" size={24} color="#8E8E8E" />
+          <Text style={styles.label}>Flat Tyre</Text>
           <Switch
             value={slipMerah}
             onValueChange={(value) => setSlipMerah(value)}
@@ -53,7 +63,7 @@ export default function FilterScreen() {
         <Text style={styles.sectionTitle}>Status</Text>
         <View style={styles.row}>
           <Icon name="time" size={24} color="#8E8E8E" />
-          <Text style={styles.label}>Menunggu</Text>
+          <Text style={styles.label}>Pending</Text>
           <Switch
             value={menunggu}
             onValueChange={(value) => setMenunggu(value)}
@@ -63,7 +73,7 @@ export default function FilterScreen() {
         </View>
         <View style={styles.row}>
           <Icon name="checkmark-done" size={24} color="#8E8E8E" />
-          <Text style={styles.label}>Sudah Bayar</Text>
+          <Text style={styles.label}>Paid</Text>
           <Switch
             value={sudahBayar}
             onValueChange={(value) => setSudahBayar(value)}
@@ -73,7 +83,7 @@ export default function FilterScreen() {
         </View>
         <View style={styles.row}>
           <Icon name="megaphone" size={24} color="#8E8E8E" />
-          <Text style={styles.label}>Akan Sidang</Text>
+          <Text style={styles.label}>OverDue</Text>
           <Switch
             value={akanSidang}
             onValueChange={(value) => setAkanSidang(value)}
@@ -83,7 +93,7 @@ export default function FilterScreen() {
         </View>
         <View style={styles.row}>
           <Icon name="hammer" size={24} color="#8E8E8E" />
-          <Text style={styles.label}>Sudah Sidang</Text>
+          <Text style={styles.label}>Escaped</Text>
           <Switch
             value={sudahSidang}
             onValueChange={(value) => setSudahSidang(value)}

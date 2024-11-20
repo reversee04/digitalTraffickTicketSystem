@@ -1,0 +1,29 @@
+{
+  "name": "dttse",
+  "version": "1.0.0",
+  "description": "A digital traffic ticketing system backend",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "reversee04",
+  "license": "ISC",
+  "dependencies": {
+    "compression": "^1.7.5",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "express-async-handler": "^1.2.0",
+    "express-rate-limit": "^7.4.1",
+    "helmet": "^8.0.0",
+    "mysql2": "^3.11.4",
+    "pg": "^8.13.1",
+    "pg-hstore": "^2.3.4",
+    "pg-promise": "^11.10.2",
+    "sequelize": "^6.37.5",
+    "sequelize-cli": "^6.6.2",
+    "xss-clean": "^0.1.4"
+  }
+}
