@@ -1,5 +1,6 @@
 'use strict';
 const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Officer extends Model {
     
@@ -17,6 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       name: DataTypes.STRING,
       badgeNumber: DataTypes.STRING,
       department: DataTypes.STRING,
+      password: DataTypes.STRING,  // Added password field
     },
     {
       sequelize,

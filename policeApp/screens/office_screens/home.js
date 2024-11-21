@@ -65,7 +65,7 @@ function IndexPoliceScreen({ navigation }) {
         title="Issue Tickets Here"
         subtitle="Create Ticket"
         icon="receipt"
-        onPress={() => navigation.navigate('ToID')}
+        onPress={() => navigation.navigate('AddOffence')}
       />
 
       <AppText styleProp={styles.ticketHistoryHeading}>Tickets History</AppText>

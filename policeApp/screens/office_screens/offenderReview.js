@@ -1,36 +1,39 @@
-import React from "react";
-import { View, StyleSheet } from "react-native";
-import DriverInfoReview from "../../components/officerComponents/driverInfoReview";
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 
+const ReviewPage = ({ route }) => {
+  const { selectedOffences, ocrResult } = route.params; // Access data passed from OCRScreen
 
-function OffenderReview({navigation}){
-    const userInfo = [
-        { label: "Licence Number", value: "0320140009" },
-        { label: "Name", value: "James Kayuni" },
-        { label: "Vehicle", value: "Toyota" },
-        { label: "Licence Plate", value: "NB 1298" },
-        { label: "Chasis Number", value: "B324DC" },
-      ];
-
-      const handleRequestChange = () => {
-            navigation.navigate('AddOffence')
-      };
-
-    return(
-        <View style={styles.container}>
-            <DriverInfoReview 
-                avatarIcon="account" 
-                userInfo={userInfo}
-                onRequestChange={handleRequestChange}
-            />
-        </View>
-    )
-}
-
-export default OffenderReview;
+  return (
+    <View style={styles.container}>
+      <Text style={styles.header}>Review Your Ticket</Text>
+      <Text style={styles.subHeader}>Selected Violations:</Text>
+      {selectedOffences.map((offenceId, index) => (
+        <Text key={index}>{offenceId}</Text>
+      ))}
+      <Text style={styles.subHeader}>OCR Result:</Text>
+      <Text>{ocrResult}</Text>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    }
-})
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  subHeader: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: 10,
+  },
+});
+
+export default ReviewPage;

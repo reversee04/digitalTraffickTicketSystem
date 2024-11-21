@@ -17,4 +17,7 @@ router.put('/officers/:id', OfficerController.updateOfficer);
 // Route to delete an officer by ID
 router.delete('/officers/:id', OfficerController.deleteOfficer);
 
+// Route to login an officer
+router.post('/officers/login', OfficerController.loginOfficer);
+
 module.exports = router;
