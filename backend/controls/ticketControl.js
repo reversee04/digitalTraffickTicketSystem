@@ -5,11 +5,11 @@ class TicketController {
   // Create a new ticket
   static createTicket = asyncHandler(async (req, res) => {
     try {
-      const { status, paymentStatus, officerId, driverId, violationId } = req.body;
+      const { status, paymentStatus, officerId, driverId, violationId, description } = req.body;
 
       // Validate the request body
       if (!status || !paymentStatus || !officerId || !driverId || !violationId) {
-        return res.status(400).json({ message: 'Please fill in all fields except date' });
+        return res.status(400).json({ message: 'Please fill in all fields except date and description' });
       }
 
       // Automatically set the date to the current date and time
@@ -23,6 +23,7 @@ class TicketController {
         officerId,
         driverId,
         violationId,
+        description, // Include the new description field
       });
 
       res.status(201).json(newTicket);
@@ -93,11 +94,11 @@ class TicketController {
   static updateTicket = asyncHandler(async (req, res) => {
     try {
       const { id } = req.params;
-      const { status, paymentStatus, officerId, driverId, violationId } = req.body;
+      const { status, paymentStatus, officerId, driverId, violationId, description } = req.body;
 
       // Validate the request body
       if (!status || !paymentStatus || !officerId || !driverId || !violationId) {
-        return res.status(400).json({ message: 'Please fill in all fields except date' });
+        return res.status(400).json({ message: 'Please fill in all fields except date and description' });
       }
 
       // Automatically set the date to the current date and time
@@ -105,7 +106,7 @@ class TicketController {
 
       // Update the ticket
       const [updated] = await Ticket.update(
-        { date, status, paymentStatus, officerId, driverId, violationId },
+        { date, status, paymentStatus, officerId, driverId, violationId, description }, // Include description
         { where: { id } }
       );
 
@@ -153,6 +154,41 @@ class TicketController {
       });
     }
   });
+
+  static getTicketsByDriverId = asyncHandler(async (req, res) => {
+    try {
+        const { driverId } = req.params;
+
+        // Log the incoming request for debugging
+        console.log(`Fetching tickets for driverId: ${driverId}`);
+
+        // Fetch tickets with all associated models
+        const tickets = await Ticket.findAll({
+            where: { driverId },
+            include: [
+                { model: Driver, as: 'driver' },
+                { model: Officer, as: 'officer' },
+                { model: Violation, as: 'violation' },
+                { model: Payment, as: 'payment' },
+            ],
+        });
+
+        // If no tickets found, respond with 404
+        if (tickets.length === 0) {
+            return res.status(404).json({ message: 'No tickets found for this driver' });
+        }
+
+        // Respond with the tickets in JSON format
+        res.status(200).json(tickets);
+    } catch (error) {
+        console.error('Error fetching tickets for driver:', error.message);
+        res.status(500).json({
+            message: 'Failed to fetch tickets',
+            error: error.message,
+        });
+    }
+});
+
 }
 
 module.exports = TicketController;

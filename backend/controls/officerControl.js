@@ -126,40 +126,46 @@ class OfficerController {
 
   static loginOfficer = asyncHandler(async (req, res) => {
     try {
-      const { username, password } = req.body;
-
-      if (!username || !password) {
-        return res.status(400).json({ message: 'Please provide both username and password' });
+      console.log('Incoming Login Request:', req.body);
+      const { badgeNumber, password } = req.body;
+  
+      // Validate input
+      if (!badgeNumber || !password) {
+        return res.status(400).json({ message: 'Please provide both badge number and password' });
       }
-
-      const officer = await Officer.findOne({ where: { username } });
+  
+      // Check if officer exists
+      const officer = await Officer.findOne({ where: { badgeNumber } });
       if (!officer) {
-        return res.status(401).json({ message: 'Invalid credentials' });
+        return res.status(401).json({ message: 'Invalid badge number or password' });
       }
-
+  
+      // Validate password
       const isPasswordValid = await bcrypt.compare(password, officer.password);
       if (!isPasswordValid) {
-        return res.status(401).json({ message: 'Invalid credentials' });
+        return res.status(401).json({ message: 'Invalid badge number or password' });
       }
-
+  
+      // Generate JWT
       const token = jwt.sign(
         { id: officer.id, name: officer.name, department: officer.department },
-        process.env.JWT_SECRET || 'default_secret_key', // Use environment variable
-        { expiresIn: '1h' }
+        process.env.JWT_SECRET || 'default_secret_key', 
+        { expiresIn: '2h' }
       );
-
+  
+      // Return success response
       const officerData = {
         id: officer.id,
         name: officer.name,
         department: officer.department,
       };
-
       res.status(200).json({ message: 'Login successful', token, officer: officerData });
     } catch (error) {
       console.error('Error logging in officer:', error.message);
       res.status(500).json({ message: 'Failed to log in officer', error: error.message });
     }
   });
+  
 }
 
 module.exports = OfficerController;

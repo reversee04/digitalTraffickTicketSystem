@@ -41,6 +41,10 @@ module.exports = (sequelize, DataTypes) => {
       officerId: DataTypes.INTEGER,
       driverId: DataTypes.INTEGER,
       violationId: DataTypes.INTEGER,
+      description: {
+        type: DataTypes.TEXT,
+        allowNull: true, // You can set this to false if the field is required
+      },
     },
     {
       sequelize,

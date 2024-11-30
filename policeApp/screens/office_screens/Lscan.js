@@ -1,120 +1,98 @@
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native';
 import axios from 'axios';
 import * as ImagePicker from 'expo-image-picker';
-import * as FileSystem from 'expo-file-system';
 
 const DetectObject = () => {
   const [imageUri, setImageUri] = useState(null);
-  const [labels, setLabels] = useState([]);
+  const [extractedText, setExtractedText] = useState('');
 
-  const pickImage = async () => {
+  const takePicture = async () => {
     try {
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images, // Corrected property
-        allowEditing: true,
+      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission Denied', 'Camera permission is required to use this feature.');
+        return;
+      }
+
+      const result = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
         aspect: [4, 3],
         quality: 1,
       });
+
       if (!result.canceled) {
         setImageUri(result.assets[0].uri);
+      } else {
+        console.log('Camera action canceled by the user.');
       }
-      console.log(result);
     } catch (error) {
-      console.error('Error picking Image:', error);
+      console.error('Error taking picture:', error.message);
+      Alert.alert('Error', 'An error occurred while accessing the camera.');
     }
   };
 
   const analyzeImage = async () => {
+    if (!imageUri) {
+      Alert.alert('No Image', 'Please capture an image before analyzing.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('image', {
+      uri: imageUri,
+      type: 'image/jpeg',
+      name: 'image.jpg',
+    });
+
     try {
-      if (!imageUri) {
-        alert('Please select an image first.');
-        return;
+      console.log('Sending image to backend for processing...');
+      const response = await axios.post('http://192.168.120.227:3000/process-image', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      if (response.data.text) {
+        console.log('Image analysis complete:', response.data.text);
+        setExtractedText(response.data.text);
+      } else {
+        console.warn('No text extracted from the image.');
+        Alert.alert('No Result', 'Could not extract text from the image.');
       }
-
-      const apiKey = "b2543c632522ec9f0717ea11341c5c449f738a2a";
-      const apiUrl = `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`;
-
-      const base64ImageData = await FileSystem.readAsStringAsync(imageUri, { encoding: FileSystem.EncodingType.Base64 });
-
-      const requestData = {
-        requests: [{
-          image: {
-            content: base64ImageData,
-          },
-          features: [{ type: 'LABEL_DETECTION', maxResults: 5 }],
-        }],
-      };
-
-      const apiResponse = await axios.post(apiUrl, requestData);
-      setLabels(apiResponse.data.responses[0].labelAnnotations);
     } catch (error) {
-      console.error('Error analyzing image:', error);
-      alert('Error analyzing image. Please try again later.');
+      console.error('Error analyzing image:', error.response?.data || error.message);
+      Alert.alert('Error', 'An error occurred while analyzing the image. Please try again.');
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Image Scanner for OCR</Text>
+      <Text style={styles.header}>Image Scanner for Number Plates</Text>
 
       {imageUri && (
         <Image source={{ uri: imageUri }} style={{ width: 200, height: 300 }} />
       )}
 
-      <TouchableOpacity onPress={pickImage} style={styles.button}>
-        <Text style={styles.buttonText}>Choose an Image</Text>
+      <TouchableOpacity onPress={takePicture} style={styles.button}>
+        <Text style={styles.buttonText}>Take a Picture</Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={analyzeImage} style={styles.button}>
         <Text style={styles.buttonText}>Analyze Image</Text>
       </TouchableOpacity>
 
-      {labels.length > 0 && (
-        <View style={styles.labelContainer}>
-          <Text style={styles.labelHeader}>Labels:</Text>
-          {labels.map((label) => (
-            <Text key={label.mid} style={styles.labelText}>
-              {label.description}
-            </Text>
-          ))}
-        </View>
-      )}
+      {extractedText ? (
+        <Text style={styles.resultText}>Extracted Text: {extractedText}</Text>
+      ) : null}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-  },
-  header: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  button: {
-    backgroundColor: '#007BFF',
-    padding: 10,
-    borderRadius: 5,
-    marginVertical: 10,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-  },
-  labelContainer: {
-    marginTop: 20,
-  },
-  labelHeader: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  labelText: {
-    fontSize: 16,
-    color: '#333',
-  },
+  container: { padding: 20 },
+  header: { fontSize: 20, fontWeight: 'bold', marginBottom: 20 },
+  button: { backgroundColor: '#007BFF', padding: 10, borderRadius: 5, marginVertical: 10, alignItems: 'center' },
+  buttonText: { color: 'white', fontSize: 16 },
+  resultText: { fontSize: 16, color: '#333', marginTop: 20 },
 });
 
 export default DetectObject;

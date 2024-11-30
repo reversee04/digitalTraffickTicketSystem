@@ -17,7 +17,7 @@ import AddOffences from './screens/office_screens/addOffences';
 import OCRScreen from './screens/office_screens/Lscan';
 import ReviewPage from './screens/office_screens/offenderReview';
 import DetectObject from './screens/office_screens/Lscan';
-import LoginForm from './screens/office_screens/login';
+import LoginScreen from './screens/office_screens/LoginScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -42,7 +42,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <View style={styles.container}>
-        {/* AppBar Component */}
+        
         <AppBar 
           onMenuPress={() => console.log("Menu pressed")} 
           onNotificationPress={() => console.log("Notification pressed")} 
@@ -50,7 +50,7 @@ export default function App() {
 
         <Stack.Navigator initialRouteName={isLoggedIn ? 'PoliceHome' : 'Login'} screenOptions={{ headerShown: false }}>
           <Stack.Screen name="PoliceHome" component={IndexPoliceScreen} />
-          <Stack.Screen name="Login" component={LoginForm} />
+          <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="HistoryPage" component={PoliceHistoryScreen} />
           <Stack.Screen name="ProfilePage" component={ProfilePage} />
           <Stack.Screen name="ToID" component={ChooseMethod} />
@@ -61,7 +61,7 @@ export default function App() {
           <Stack.Screen name="OCR" component={OCRScreen} />
         </Stack.Navigator>
 
-        {/* BottomNavigationBar Component */}
+        
         {isLoggedIn && (
           <BottomNavigationBar
             activeTab={activeTab}

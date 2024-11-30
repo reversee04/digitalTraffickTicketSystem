@@ -14,7 +14,7 @@ function IndexPoliceScreen({ navigation }) {
   useEffect(() => {
     const fetchTicketHistories = async () => {
       try {
-        const response = await axios.get('http://192.168.238.227:3000/api/tickets');
+        const response = await axios.get('http://192.168.120.227:3000/api/tickets');
         const fetchedData = response.data;
 
         console.log('Fetched Ticket Histories:', fetchedData);

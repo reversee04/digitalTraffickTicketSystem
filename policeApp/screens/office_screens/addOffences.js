@@ -15,7 +15,7 @@ function AddOffences({ navigation }) {
   useEffect(() => {
     const fetchViolations = async () => {
       try {
-        const response = await axios.get('http://192.168.238.227:3000/api/violations'); // Replace with your API endpoint
+        const response = await axios.get('http://192.168.120.227:3000/api/violations'); // Replace with your API endpoint
         setOffences(response.data); // Assume the response contains the violation list
       } catch (err) {
         setError('Failed to load violations');

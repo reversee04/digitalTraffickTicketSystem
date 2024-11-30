@@ -17,4 +17,6 @@ router.put('/tickets/:id', TicketController.updateTicket);
 // Delete a ticket by ID
 router.delete('/tickets/:id', TicketController.deleteTicket);
 
+router.get('/driverTickets/:driverId', TicketController.getTicketsByDriverId);
+
 module.exports = router;

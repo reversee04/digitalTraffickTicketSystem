@@ -23,8 +23,9 @@ module.exports = (sequelize, DataTypes) => {
     {
       name: DataTypes.STRING,
       licenseNumber: DataTypes.STRING,
-      contactInfo: DataTypes.STRING,
-      password: DataTypes.STRING,  // Added password field
+      email: DataTypes.STRING,
+      password: DataTypes.STRING,  
+      phoneNumber: DataTypes.INTEGER,
     },
     {
       sequelize,
